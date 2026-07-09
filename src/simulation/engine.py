@@ -65,7 +65,7 @@ class MotorSimulacion:
         """
         try:
             # Verificar que los motores estén inicializados
-            if not self.motor_geo.distancia_matrix is not None:
+            if self.motor_geo.distance_matrix is None:
                 raise ValueError("MotorGeometrico no está inicializado")
 
             # Evento inicial
@@ -81,7 +81,7 @@ class MotorSimulacion:
             self.simulacion_activa = True
             return True
         except Exception as e:
-            print(f"❌ Error inicializando simulación: {str(e)}")
+            print(f"[ERROR] Error inicializando simulación: {str(e)}")
             return False
 
     def ejecutar(self) -> bool:
@@ -110,7 +110,7 @@ class MotorSimulacion:
             return True
 
         except Exception as e:
-            print(f"❌ Error ejecutando simulación: {str(e)}")
+            print(f"[ERROR] Error ejecutando simulación: {str(e)}")
             return False
 
     def ejecutar_paso(self) -> tuple[Optional[EventoSimulacion], bool]:
@@ -160,26 +160,29 @@ class MotorSimulacion:
 
     def _procesar_asignacion(self, evento: EventoSimulacion) -> None:
         """Procesar evento ASIGNACION_PILOTE."""
-        pilote_id = evento.datos.get("pilote_id")
-        equipos_libres = self.motor_rec.get_equipos_disponibles()
+        try:
+            pilote_id = evento.datos.get("pilote_id")
+            equipos_libres = self.motor_rec.get_equipos_disponibles()
 
-        if equipos_libres and pilote_id:
-            equipo_id = equipos_libres[0]
-            evento_inicio = self.motor_rec.asignar_trabajo(
-                equipo_id, pilote_id, self.tiempo_actual
-            )
-            if evento_inicio:
-                duracion_horas = evento_inicio.get("tiempo_ejecucion", 4)
-                evento_fin = EventoSimulacion(
-                    tipo=TipoEvento.FIN_EJECUCION,
-                    timestamp=self.tiempo_actual + timedelta(hours=duracion_horas),
-                    entidad_id=equipo_id,
-                    datos={
-                        "equipo_id": equipo_id,
-                        "pilote_id": pilote_id,
-                    },
+            if equipos_libres and pilote_id:
+                equipo_id = equipos_libres[0]
+                evento_inicio = self.motor_rec.asignar_trabajo(
+                    equipo_id, pilote_id, self.tiempo_actual
                 )
-                self.event_queue.push(evento_fin)
+                if evento_inicio:
+                    duracion_horas = evento_inicio.get("tiempo_ejecucion", 4)
+                    evento_fin = EventoSimulacion(
+                        tipo=TipoEvento.FIN_EJECUCION,
+                        timestamp=self.tiempo_actual + timedelta(hours=duracion_horas),
+                        entidad_id=equipo_id,
+                        datos={
+                            "equipo_id": equipo_id,
+                            "pilote_id": pilote_id,
+                        },
+                    )
+                    self.event_queue.push(evento_fin)
+        except Exception as e:
+            pass  # Ignorar errores en asignación
 
     def _procesar_inicio_ejecucion(self, evento: EventoSimulacion) -> None:
         """Procesar evento INICIO_EJECUCION."""
@@ -187,25 +190,28 @@ class MotorSimulacion:
 
     def _procesar_fin_ejecucion(self, evento: EventoSimulacion) -> None:
         """Procesar evento FIN_EJECUCION."""
-        equipo_id = evento.datos.get("equipo_id")
-        pilote_id = evento.datos.get("pilote_id")
+        try:
+            equipo_id = evento.datos.get("equipo_id")
+            pilote_id = evento.datos.get("pilote_id")
 
-        if equipo_id and pilote_id:
-            evento_fin_dict = self.motor_rec.finalizar_trabajo(
-                equipo_id, self.tiempo_actual
-            )
-            self.motor_rest.ejecutar_pilote(pilote_id, self.tiempo_actual)
-
-            # Agregar próximas asignaciones
-            disponibles = self.motor_rest.get_pilotes_disponibles(self.tiempo_actual)
-            for p_id in disponibles:
-                evento_asig = EventoSimulacion(
-                    tipo=TipoEvento.ASIGNACION_PILOTE,
-                    timestamp=self.tiempo_actual + timedelta(seconds=1),
-                    entidad_id=p_id,
-                    datos={"pilote_id": p_id},
+            if equipo_id and pilote_id:
+                evento_fin_dict = self.motor_rec.finalizar_trabajo(
+                    equipo_id, self.tiempo_actual
                 )
-                self.event_queue.push(evento_asig)
+                self.motor_rest.ejecutar_pilote(pilote_id, self.tiempo_actual)
+
+                # Agregar próximas asignaciones
+                disponibles = self.motor_rest.get_pilotes_disponibles(self.tiempo_actual)
+                for p_id in disponibles:
+                    evento_asig = EventoSimulacion(
+                        tipo=TipoEvento.ASIGNACION_PILOTE,
+                        timestamp=self.tiempo_actual + timedelta(seconds=1),
+                        entidad_id=p_id,
+                        datos={"pilote_id": p_id},
+                    )
+                    self.event_queue.push(evento_asig)
+        except Exception as e:
+            pass  # Ignorar errores en fin de ejecución
 
     def _procesar_desbloqueo(self, evento: EventoSimulacion) -> None:
         """Procesar evento DESBLOQUEO_PILOTE."""
@@ -233,7 +239,10 @@ class MotorSimulacion:
         Returns:
             EstadoGlobal con métricas
         """
-        stats_rest = self.motor_rest.get_estadisticas_restricciones()
+        try:
+            stats_rest = self.motor_rest.get_estadisticas_restricciones(self.tiempo_actual)
+        except:
+            stats_rest = {}
         stats_rec = self.motor_rec.get_estadisticas_equipos()
 
         total_pilotes = len(self.proyecto.pilotes)

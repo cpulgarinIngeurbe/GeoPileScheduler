@@ -9,8 +9,14 @@ from src.constraints import MotorRestricciones
 
 from .base_optimizer import Solucion
 from .greedy_optimizer import GreedyOptimizer
-from .ortools_optimizer import ORToolsOptimizer
 from .genetic_optimizer import GeneticOptimizer
+
+try:
+    from .ortools_optimizer import ORToolsOptimizer
+    ORTOOLS_DISPONIBLE = True
+except (ImportError, ModuleNotFoundError):
+    ORTOOLS_DISPONIBLE = False
+    ORToolsOptimizer = None
 
 
 @dataclass
@@ -98,7 +104,7 @@ class ComparacionOptimizadores:
         # Mejor solución
         if self.mejor_solucion:
             reporte += "\n" + "-" * 80 + "\n"
-            reporte += f"🏆 MEJOR SOLUCIÓN: {self.mejor_solucion.nombre_optimizador}\n"
+            reporte += f"BEST MEJOR SOLUCIÓN: {self.mejor_solucion.nombre_optimizador}\n"
             reporte += f"   Score: {self.mejor_solucion.score_multiobjetivo:.1f}\n"
             reporte += f"   Makespan: {self.mejor_solucion.makespan:.1f} horas\n"
             reporte += f"   Tiempo: {self.mejor_solucion.tiempo_ejecucion:.2f} segundos\n"
@@ -163,24 +169,27 @@ class ComparadorOptimizadores:
             )
             solucion_greedy = greedy.optimizar()
             comparacion.agregar_solucion(solucion_greedy)
-            print(f"✅ {solucion_greedy.resumen()}")
+            print(f"[OK] {solucion_greedy.resumen()}")
         except Exception as e:
-            print(f"❌ Error Greedy: {str(e)}")
+            print(f"[ERROR] Error Greedy: {str(e)}")
 
-        # OR-Tools
-        print("Ejecutando OR-Tools...")
-        try:
-            ortools = ORToolsOptimizer(
-                self.proyecto,
-                self.motor_geo,
-                self.motor_rest,
-                self.pesos_objetivos,
-            )
-            solucion_ortools = ortools.optimizar()
-            comparacion.agregar_solucion(solucion_ortools)
-            print(f"✅ {solucion_ortools.resumen()}")
-        except Exception as e:
-            print(f"❌ Error OR-Tools: {str(e)}")
+        # OR-Tools (opcional, requiere instalación especial en Windows)
+        if ORTOOLS_DISPONIBLE:
+            print("Ejecutando OR-Tools...")
+            try:
+                ortools = ORToolsOptimizer(
+                    self.proyecto,
+                    self.motor_geo,
+                    self.motor_rest,
+                    self.pesos_objetivos,
+                )
+                solucion_ortools = ortools.optimizar()
+                comparacion.agregar_solucion(solucion_ortools)
+                print(f"[OK] {solucion_ortools.resumen()}")
+            except Exception as e:
+                print(f"[ERROR] Error OR-Tools: {str(e)}")
+        else:
+            print("[SKIP]  OR-Tools no disponible (requiere instalación especial)")
 
         # Genético
         print("Ejecutando Genético...")
@@ -195,9 +204,9 @@ class ComparadorOptimizadores:
             )
             solucion_genetico = genetico.optimizar()
             comparacion.agregar_solucion(solucion_genetico)
-            print(f"✅ {solucion_genetico.resumen()}")
+            print(f"[OK] {solucion_genetico.resumen()}")
         except Exception as e:
-            print(f"❌ Error Genético: {str(e)}")
+            print(f"[ERROR] Error Genético: {str(e)}")
 
         return comparacion
 
@@ -238,5 +247,5 @@ class ComparadorOptimizadores:
             return optimizer.optimizar()
 
         except Exception as e:
-            print(f"❌ Error ejecutando {nombre}: {str(e)}")
+            print(f"[ERROR] Error ejecutando {nombre}: {str(e)}")
             return None

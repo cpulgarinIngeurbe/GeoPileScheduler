@@ -74,7 +74,7 @@ class GeneticOptimizer(BaseOptimizer):
             # Evaluación inicial
             fitnesses = [self._evaluar_individuo(ind) for ind in poblacion]
             for ind, fit in zip(poblacion, fitnesses):
-                ind.fitness.values = (fit,)
+                ind.fitness.values = fit
 
             # Algoritmo genético
             hof = tools.HallOfFame(1)
@@ -219,9 +219,9 @@ class GeneticOptimizer(BaseOptimizer):
                 esperas=0.0,
             )
 
-            return (score / 100.0,)  # Normalizar a 0-1
+            return (score / 100.0,)  # Tupla requerida por DEAP
 
-        except Exception:
+        except Exception as e:
             return (0.0,)  # Penalizar errores
 
     def _individuo_a_asignaciones(self, individuo: list[int]) -> list[Asignacion]:

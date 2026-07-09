@@ -26,9 +26,9 @@ def main():
     print("\n[1/8] Cargando proyecto...")
     try:
         proyecto = load_project(test_file)
-        print(f"✅ Cargado: {proyecto.nombre}")
+        print(f"[OK] Cargado: {proyecto.nombre}")
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"[ERROR] Error: {str(e)}")
         return False
 
     # Paso 2: Calcular geometría
@@ -36,9 +36,9 @@ def main():
     try:
         motor_geo = MotorGeometrico(proyecto)
         motor_geo.calcular()
-        print(f"✅ Geometría calculada")
+        print(f"[OK] Geometría calculada")
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"[ERROR] Error: {str(e)}")
         return False
 
     # Paso 3: Inicializar restricciones
@@ -46,9 +46,9 @@ def main():
     try:
         motor_rest = MotorRestricciones(proyecto, motor_geo)
         motor_rest.inicializar()
-        print(f"✅ Restricciones inicializadas")
+        print(f"[OK] Restricciones inicializadas")
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"[ERROR] Error: {str(e)}")
         return False
 
     # Paso 4: Ejecutar optimizadores
@@ -59,13 +59,13 @@ def main():
         comparacion.imprimir_reporte()
 
         if not comparacion.mejor_solucion:
-            print("❌ No se obtuvo ninguna solución")
+            print("[ERROR] No se obtuvo ninguna solución")
             return False
 
-        print(f"✅ Optimización completada")
+        print(f"[OK] Optimización completada")
 
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"[ERROR] Error: {str(e)}")
         return False
 
     # Paso 5: Validar soluciones
@@ -75,12 +75,12 @@ def main():
             reporte = validar_solucion(proyecto, solucion)
 
             if not reporte.es_valida:
-                print(f"❌ {solucion.nombre_optimizador}: Solución inválida")
+                print(f"[ERROR] {solucion.nombre_optimizador}: Solución inválida")
             else:
-                print(f"✅ {solucion.nombre_optimizador}: Solución válida")
+                print(f"[OK] {solucion.nombre_optimizador}: Solución válida")
 
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"[ERROR] Error: {str(e)}")
         return False
 
     # Paso 6: Inicializar recursos
@@ -88,9 +88,9 @@ def main():
     try:
         motor_rec = MotorRecursos(proyecto, motor_geo)
         motor_rec.inicializar()
-        print(f"✅ Recursos inicializados")
+        print(f"[OK] Recursos inicializados")
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"[ERROR] Error: {str(e)}")
         return False
 
     # Paso 7: Simular mejor solución
@@ -99,20 +99,20 @@ def main():
         motor_sim = MotorSimulacion(proyecto, motor_geo, motor_rest, motor_rec)
 
         if not motor_sim.inicializar():
-            print("❌ No se pudo inicializar simulación")
+            print("[ERROR] No se pudo inicializar simulación")
             return False
 
         if not motor_sim.ejecutar():
-            print("❌ Error durante simulación")
+            print("[ERROR] Error durante simulación")
             return False
 
         progreso = motor_sim.get_progreso()
-        print(f"✅ Simulación completada")
+        print(f"[OK] Simulación completada")
         print(f"   • Progreso: {progreso['progreso_porcentaje']:.1f}%")
         print(f"   • Pilotes ejecutados: {progreso['pilotes_ejecutados']}")
 
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"[ERROR] Error: {str(e)}")
         return False
 
     # Paso 8: Verificación final
@@ -120,7 +120,7 @@ def main():
     try:
         mejor_solucion = comparacion.mejor_solucion
 
-        print(f"\n🏆 RESULTADOS FINALES:")
+        print(f"\n[BEST] RESULTADOS FINALES:")
         print(f"   • Mejor optimizador: {mejor_solucion.nombre_optimizador}")
         print(f"   • Score: {mejor_solucion.score_multiobjetivo:.1f}")
         print(f"   • Makespan: {mejor_solucion.makespan:.1f} horas")
@@ -128,12 +128,12 @@ def main():
         print(f"   • Tiempo optimización: {mejor_solucion.tiempo_ejecucion:.2f}s")
 
     except Exception as e:
-        print(f"❌ Error: {str(e)}")
+        print(f"[ERROR] Error: {str(e)}")
         return False
 
     # Resumen final
     print("\n" + "=" * 70)
-    print("✅ FASE 6 COMPLETADA EXITOSAMENTE")
+    print("[OK] FASE 6 COMPLETADA EXITOSAMENTE")
     print("=" * 70)
     print("\nCaracterísticas validadas:")
     print("  • BaseOptimizer interfaz abstracta")

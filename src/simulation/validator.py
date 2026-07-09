@@ -37,12 +37,12 @@ class ReporteValidacionSimulacion:
         print("=" * 70)
 
         if self.es_valida:
-            print("✅ SIMULACIÓN VÁLIDA")
+            print("[OK] SIMULACIÓN VÁLIDA")
         else:
-            print("❌ SIMULACIÓN INVÁLIDA")
+            print("[ERROR] SIMULACIÓN INVÁLIDA")
 
         if self.errores:
-            print("\n❌ ERRORES:")
+            print("\n[ERROR] ERRORES:")
             for err in self.errores:
                 print(f"   • {err}")
 
@@ -52,7 +52,7 @@ class ReporteValidacionSimulacion:
                 print(f"   • {adv}")
 
         if self.estadisticas:
-            print("\n📊 ESTADÍSTICAS:")
+            print("\n[STATS] ESTADÍSTICAS:")
             for clave, valor in self.estadisticas.items():
                 print(f"   • {clave}: {valor}")
 

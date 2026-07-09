@@ -13,7 +13,10 @@ def crear_caso_prueba_5():
 
     # Proyecto
     ws = wb.create_sheet("Proyecto", 0)
-    ws["A1:D1"] = ["Proyecto", "FechaInicio", "RadioCritico_m", "TiempoRestriccion_h"]
+    ws["A1"] = "Proyecto"
+    ws["B1"] = "FechaInicio"
+    ws["C1"] = "RadioCritico_m"
+    ws["D1"] = "TiempoRestriccion_h"
     ws["A2"] = "Caso 5 - Simulación Paralela"
     ws["B2"] = datetime(2026, 1, 1)
     ws["C2"] = 8.0  # Radio medio → bloqueos moderados
@@ -22,12 +25,17 @@ def crear_caso_prueba_5():
 
     # Unidades
     ws = wb.create_sheet("Unidades", 1)
-    ws["A1:B1"] = ["UnidadID", "Nombre"]
-    ws["A2:B2"] = ["TORRE_1", "Torre 1"]
+    ws["A1"] = "UnidadID"
+    ws["B1"] = "Nombre"
+    ws["A2"] = "TORRE_1"
+    ws["B2"] = "Torre 1"
 
     # Pilotes: 10 pilotes en grid (grid 4x3 con espaciado variable)
     ws = wb.create_sheet("Pilotes", 2)
-    ws["A1:D1"] = ["PiloteID", "UnidadID", "X", "Y"]
+    ws["A1"] = "PiloteID"
+    ws["B1"] = "UnidadID"
+    ws["C1"] = "X"
+    ws["D1"] = "Y"
 
     pilotes_data = [
         ("P_001", "TORRE_1", 0.0, 0.0),
@@ -50,7 +58,13 @@ def crear_caso_prueba_5():
 
     # Equipos: 3 equipos con distinto rendimiento
     ws = wb.create_sheet("Equipos", 3)
-    ws["A1:G1"] = ["EquipoID", "Nombre", "RendimientoPilotesDia", "ModoInicio", "PiloteInicio", "ModoFin", "PiloteFin"]
+    ws["A1"] = "EquipoID"
+    ws["B1"] = "Nombre"
+    ws["C1"] = "RendimientoPilotesDia"
+    ws["D1"] = "ModoInicio"
+    ws["E1"] = "PiloteInicio"
+    ws["F1"] = "ModoFin"
+    ws["G1"] = "PiloteFin"
 
     equipos_data = [
         ("EQ_A", "Equipo Rápido", 3, "AUTO", "", "AUTO", ""),
@@ -69,7 +83,9 @@ def crear_caso_prueba_5():
 
     # Asignaciones
     ws = wb.create_sheet("AsignacionEquipos", 4)
-    ws["A1:C1"] = ["EquipoID", "UnidadID", "Prioridad"]
+    ws["A1"] = "EquipoID"
+    ws["B1"] = "UnidadID"
+    ws["C1"] = "Prioridad"
 
     asignaciones = [
         ("EQ_A", "TORRE_1", 1),
@@ -89,7 +105,7 @@ def crear_caso_prueba_5():
 
     output_path = "data/input/caso_prueba_5.xlsx"
     wb.save(output_path)
-    print(f"✅ Archivo creado: {output_path}")
+    print(f"[OK] Archivo creado: {output_path}")
 
 
 if __name__ == "__main__":

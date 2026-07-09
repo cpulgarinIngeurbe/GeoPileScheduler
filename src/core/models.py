@@ -207,9 +207,9 @@ class Proyecto:
     fecha_inicio: datetime
     radio_critico_m: float
     tiempo_restriccion_h: float
-    unidades: Dict[str, UnidadEstructural] = field(default_factory=dict)
+    unidades_estructurales: Dict[str, UnidadEstructural] = field(default_factory=dict)
     equipos: Dict[str, Equipo] = field(default_factory=dict)
-    asignaciones: List[AsignacionEquipo] = field(default_factory=list)
+    asignaciones_equipos: List[AsignacionEquipo] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         """Valida los datos del proyecto."""
@@ -231,6 +231,36 @@ class Proyecto:
                 f"tiempo_restriccion_h debe ser número >= 0, recibido: {self.tiempo_restriccion_h}"
             )
 
+    @property
+    def pilotes(self) -> Dict[str, Pilote]:
+        """Obtener todos los pilotes del proyecto.
+
+        Returns:
+            Diccionario combinado de todos los pilotes {id: Pilote}
+        """
+        pilotes_totales = {}
+        for unidad in self.unidades_estructurales.values():
+            pilotes_totales.update(unidad.pilotes)
+        return pilotes_totales
+
+    @property
+    def unidades(self) -> Dict[str, UnidadEstructural]:
+        """Acceso compatible a unidades_estructurales.
+
+        Returns:
+            Diccionario de unidades
+        """
+        return self.unidades_estructurales
+
+    @property
+    def asignaciones(self) -> List[AsignacionEquipo]:
+        """Acceso compatible a asignaciones_equipos.
+
+        Returns:
+            Lista de asignaciones
+        """
+        return self.asignaciones_equipos
+
     def agregar_unidad(self, unidad: UnidadEstructural) -> None:
         """Añade una unidad estructural al proyecto.
 
@@ -240,7 +270,7 @@ class Proyecto:
         Raises:
             ValueError: Si ya existe una unidad con ese ID.
         """
-        if unidad.id in self.unidades:
+        if unidad.id in self.unidades_estructurales:
             raise ValueError(f"Unidad {unidad.id} ya existe en el proyecto")
         self.unidades[unidad.id] = unidad
 

@@ -62,7 +62,7 @@ def plot_timeline(
         return output_path
 
     except Exception as e:
-        print(f"❌ Error generando timeline: {str(e)}")
+        print(f"[ERROR] Error generando timeline: {str(e)}")
         return None
 
 
@@ -149,7 +149,7 @@ def plot_gantt(
         return output_path
 
     except Exception as e:
-        print(f"❌ Error generando Gantt: {str(e)}")
+        print(f"[ERROR] Error generando Gantt: {str(e)}")
         return None
 
 
@@ -212,7 +212,7 @@ def plot_progression(
         return output_path
 
     except Exception as e:
-        print(f"❌ Error generando progreso: {str(e)}")
+        print(f"[ERROR] Error generando progreso: {str(e)}")
         return None
 
 
@@ -261,7 +261,7 @@ def plot_equipment_utilization(
         return output_path
 
     except Exception as e:
-        print(f"❌ Error generando utilización: {str(e)}")
+        print(f"[ERROR] Error generando utilización: {str(e)}")
         return None
 
 
@@ -317,7 +317,7 @@ def plot_event_histogram(
         return output_path
 
     except Exception as e:
-        print(f"❌ Error generando histograma: {str(e)}")
+        print(f"[ERROR] Error generando histograma: {str(e)}")
         return None
 
 
@@ -421,5 +421,5 @@ def generar_dashboard_simulacion(
         return output_path
 
     except Exception as e:
-        print(f"❌ Error generando dashboard: {str(e)}")
+        print(f"[ERROR] Error generando dashboard: {str(e)}")
         return None

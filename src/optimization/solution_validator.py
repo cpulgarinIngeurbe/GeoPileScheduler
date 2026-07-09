@@ -32,22 +32,22 @@ class ReporteValidacionSolucion:
         print("=" * 70)
 
         if self.es_valida:
-            print("✅ SOLUCIÓN VÁLIDA")
+            print("[OK] SOLUCIÓN VÁLIDA")
         else:
-            print("❌ SOLUCIÓN INVÁLIDA")
+            print("[ERROR] SOLUCIÓN INVÁLIDA")
 
         if self.errores:
-            print("\n❌ ERRORES:")
+            print("\n[ERROR] ERRORES:")
             for err in self.errores:
                 print(f"   • {err}")
 
         if self.advertencias:
-            print("\n⚠️  ADVERTENCIAS:")
+            print("\n[WARN]  ADVERTENCIAS:")
             for adv in self.advertencias:
                 print(f"   • {adv}")
 
         if self.estadisticas:
-            print("\n📊 ESTADÍSTICAS:")
+            print("\n[STATS] ESTADÍSTICAS:")
             for clave, valor in self.estadisticas.items():
                 print(f"   • {clave}: {valor}")
 
